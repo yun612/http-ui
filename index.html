@@ -14,40 +14,50 @@
         function initFile() {
             return {
                 files: [],
-                optionValue:'',
-                filePath: '/file',
-                async fetchData() {
-                    await fetchFileList().then(res => {
+                optionValue: '',
+                filePath: ['/file'],
+                async fetchData(path) {
+                    await fetchFileList(path).then(res => {
                         this.files = res
                         console.log(res)
                     })
                 },
-                async saveData() {
-                    let data = {
-                        downloadPath: this.settings.downloadPath,
-                        maxTasks: this.settings.maxTasks,
-                        maxDownloadSpeed: this.settings.maxDownloadSpeed,
-                        maxUploadSpeed: this.settings.maxUploadSpeed,
+                async filterType(paths, type) {
+                    let path = ''
+                    for (let i = 0; i < paths.length; i++) {
+                        path = paths.join('')
                     }
-                    await saveSettings(data)
+                    await fetchFilterFile(path, type).then(res => {
+                        this.files = res
+                        console.log(res)
+                    })
                 },
                 goFile(file) {
                     if (file) {
                         if (file.children) {
-                            this.filePath = file.path
+                            this.filePath.push(file.path)
                             this.files = file.children
+                            // TODO: 这里需要把文件的路径传过去,重新调用接口
+                            // let path = ''
+                            // for (let i = 0; i < this.filePath.length; i++) {
+                            //     path = this.filePath.join('')
+                            //     console.log(path)
+                            // }
+                            // this.fetchData(path)
                         }
                     } else {
-                        this.filePath = file.path
+                        this.filePath.push(file.path)
+                        // TODO: 这里需要把文件的路径传过去,重新调用接口
                         // this.fetchData()
                     }
                 },
-               async filterType(path,type){
-                console.log(path,type)
-                await fetchFilterFile(path,type).then(res => {
-                        this.files = res
-                        console.log(res)
-                    })
+                goBack(path) {
+                    console.log(path)
+                    // 通过这个path去找到上一级的文件夹，并且把这个文件夹的children赋值给files
+                    const index = this.filePath.indexOf(path)
+                    this.filePath.splice(index + 1)
+                    console.log(this.filePath)
+                    this.fetchData(path)
                 }
             }
         }
@@ -87,16 +97,23 @@
         </div>
         <div x-data="initFile()" x-init="fetchData" class="space-y-10 w-full flex-grow pl-10">
             <div class="flex items-center justify-between w-full">
-                <template x-if="filePath">
-                    <p class="text-xl -mt-4" x-text="filePath" @click="goFile(filePath)"></p>
-                </template>
+                <div class="flex items-center space-x-1">
+                    <template x-if="filePath.length>0">
+                        <template x-for="item in filePath">
+                            <div class="flex items-center space-x-1">
+                                <p class="text-xl -mt-4 cursor-pointer hover:text-indigo-600" x-text="item"
+                                    @click="goBack(item)"></p>
+                            </div>
+                        </template>
+                    </template>
+                </div>
 
                 <select x-model="optionValue" @change="filterType(filePath,optionValue)" class="rounded-md">
                     <option value="all">All(*.*)</option>
-                    <option value="Movie(*.mp4;*.mov)">Movie(*.mp4;*.mov)</option>
-                    <option value="Photo(*.png;*.jpg;*.gif)">Photo(*.png;*.jpg;*.gif)</option>
-                    <option value="Archive(*.zip;*.rar;*.tar)">Archive(*.zip;*.rar;*.tar)</option>
-                    <option value="Document(*.pptx;*.docx;*.xlsx)">Document(*.pptx;*.docx;*.xlsx)</option>
+                    <option value="video">Video(*.mp4;*.mov)</option>
+                    <option value="image">Photo(*.png;*.jpg;*.gif)</option>
+                    <option value="archive">Archive(*.zip;*.rar;*.tar)</option>
+                    <option value="document">Document(*.pptx;*.docx;*.xlsx)</option>
                 </select>
             </div>
             <div class="px-4 sm:px-6 lg:px-8">

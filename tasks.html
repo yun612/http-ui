@@ -41,12 +41,14 @@
                 async submitData(path) {
                     await submitDownloadPath(path)
                 },
-                async refresh(id) {
-                    await fetchTaskInfo(id).then(res => {
-                        this.tasks = res
-                        this.taskData = res.items
-                        console.log(res)
-                    })
+                async refresh(ids) {
+                    console.log(ids)
+                    await fetchTaskInfo(ids)
+                    // await fetchTaskInfo(ids).then(res => {
+                    //     this.tasks = res
+                    //     this.taskData = res.items
+                    //     console.log(res)
+                    // })
                 },
                 // 下面这部分 要是多选的时候，每一个的状态都要发生变化，用sse去获取每一个的状态
                 async pauseTaskDownload(ids) {
