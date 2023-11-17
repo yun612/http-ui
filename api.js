@@ -248,6 +248,23 @@ async function fetchFilterFile(path, filter) {
                 createdAt: '2023-11-12'
             }]
 }
+
+//点击排序按钮，对文件列表进行排序
+async function sortFileList(path, sort) {
+    console.log(path, sort)
+    return [{
+        name: 'test.测试用例类型',
+        isDirectory: false,
+        type: '测试用例类型',
+        path: '/data/test',
+        size: '1MB',
+        createdAt: '2023-11-12'
+    }]
+    // TODO: 根据sort的值，对path目录下的文件列表进行排序,sort的值有：name, size, createdAt,返回的数据格式和上面的一样，这里我就不写了
+} 
+
+
+
 // tasks 页面 api
 async function fetchTasks(params) {
     console.log(params)
@@ -289,7 +306,7 @@ async function fetchTasks(params) {
                 status: 'downloading',
                 size: '2.6GB',
                 speed: '120KB',
-                progress: '10',
+                progress: '50',
                 createdAt: '2023-11-11',
                 finishedAt: '2023-11-12',
                 timeLeft: '3m 2s',

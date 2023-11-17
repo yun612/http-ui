@@ -53,11 +53,20 @@
                 },
                 goBack(path) {
                     console.log(path)
-                    // 通过这个path去找到上一级的文件夹，并且把这个文件夹的children赋值给files
                     const index = this.filePath.indexOf(path)
                     this.filePath.splice(index + 1)
                     console.log(this.filePath)
                     this.fetchData(path)
+                },
+                sortFileType(paths, type) {
+                    let path = ''
+                    for (let i = 0; i < paths.length; i++) {
+                        path = paths.join('')
+                    }
+                    sortFileList(path, type).then(res => {
+                        this.files = res
+                        console.log(res)
+                    })
                 }
             }
         }
@@ -125,7 +134,8 @@
                                     <tr>
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                                            <div class="flex items-center cursor-pointer">
+                                            <div class="flex items-center cursor-pointer"
+                                                @click="sortFileType(filePath,'name')">
                                                 <p>File name</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -136,7 +146,8 @@
                                         </th>
                                         <th scope="col"
                                             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            <div class="flex items-center cursor-pointer">
+                                            <div class="flex items-center cursor-pointer"
+                                                @click="sortFileType(filePath,'size')">
                                                 <p>Size</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -147,7 +158,8 @@
                                         </th>
                                         <th scope="col"
                                             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            <div class="flex items-center cursor-pointer">
+                                            <div class="flex items-center cursor-pointer"
+                                                @click="sortFileType(filePath,'createdAt')">
                                                 <p>Create time</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
