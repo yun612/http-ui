@@ -12,17 +12,15 @@ async function fetchSettings() {
     }
 }
 
+
 // 保存设置
 async function saveSettings(settings) {
     console.log(settings)
     return true
 }
-
 // file 页面 api
-
 // TODO: 获取文件列表
-// 如果 没有path参数或者参数是/file，那么就是获取根目录下的文件列表
-// 如果有path参数，那么就是获取path目录下的文件列表
+// 如果 没有path参数或者参数是/file，就是获取根目录下的文件列表,有payt参数，就是获取path目录下的文件列表
 
 async function fetchFileList(path, filter) {
     console.log(path, filter)
@@ -33,7 +31,6 @@ async function fetchFileList(path, filter) {
                     name: 'Test1',
                     isDirectory: true,
                     path: '/data/mock_dir/test1',
-                    size: 0,
                     createdAt: '2023-11-11',
                     children: [
                         {
@@ -184,7 +181,6 @@ async function fetchFilterFile(path, filter) {
                 name: 'Test1',
                 isDirectory: true,
                 path: '/data/mock_dir/test1',
-                size: 0,
                 createdAt: '2023-11-11',
                 children: [
                     {
@@ -223,11 +219,10 @@ async function fetchFilterFile(path, filter) {
         ]
     } else
         return [
-            {
+            { 
                 name: 'Test1',
                 isDirectory: true,
                 path: '/data/mock_dir/test1',
-                size: 0,
                 createdAt: '2023-11-11',
                 children: [
                     {
@@ -370,7 +365,7 @@ async function submitDownloadPath(path) {
 
 // 重新下载任务的详细信息，ids是一个数组，单个任务，就是一个元素的数组，多个任务就是多个元素的数组，实现同一个接口单量和多量的处理
 async function fetchTaskInfo(ids) {
-    console.log(ids)
+    console.log(ids,'刷新，重新获取任务的详细信息')
     // return {
     //     id: 'refreshed_id',
     //     type: 'http',

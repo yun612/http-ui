@@ -12,7 +12,7 @@ ps: 大家的注释说明都要用英文，这里用中文是为了方便大家�
 - Start the SpringBoot project and access it
 
 ## The technology used by the UI
-- [alpinejs.org](https://alpinejs.dev/) // Front-end framework
+- [alpinejs.dev](https://alpinejs.dev/) // Front-end framework
 - [tailwindcss.com](https://tailwindcss.com/) // css framework
 - [heroicons.com](https://heroicons.com/) // Icon Library
 - [tailwindui.com](https://tailwindui.com/) // Component Library
