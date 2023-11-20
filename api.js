@@ -219,7 +219,7 @@ async function fetchFilterFile(path, filter) {
         ]
     } else
         return [
-            { 
+            {
                 name: 'Test1',
                 isDirectory: true,
                 path: '/data/mock_dir/test1',
@@ -256,7 +256,7 @@ async function sortFileList(path, sort) {
         createdAt: '2023-11-12'
     }]
     // TODO: 根据sort的值，对path目录下的文件列表进行排序,sort的值有：name, size, createdAt,返回的数据格式和上面的一样，这里我就不写了
-} 
+}
 
 
 
@@ -271,6 +271,7 @@ async function fetchTasks(params) {
                 type: 'http',
                 url: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-arm.iso',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 2,
                 status: 'downloading',
                 size: '3GB',
                 speed: '2.3MB',
@@ -286,6 +287,7 @@ async function fetchTasks(params) {
                 type: 'http',
                 url: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-arm.iso',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 1,
                 status: 'pending',
                 size: '9MB',
                 speed: '1.2MB',
@@ -298,6 +300,7 @@ async function fetchTasks(params) {
                 id: '333',
                 type: 'bt',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 6,
                 status: 'downloading',
                 size: '2.6GB',
                 speed: '120KB',
@@ -314,6 +317,7 @@ async function fetchTasks(params) {
                 type: 'http',
                 url: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-arm.iso',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 3,
                 status: 'downloaded',
                 size: '9MB',
                 speed: '1.2MB',
@@ -328,6 +332,7 @@ async function fetchTasks(params) {
                 id: '555',
                 type: 'bt',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 4,
                 status: 'downloading',
                 size: '2.6GB',
                 speed: '120KB',
@@ -344,6 +349,7 @@ async function fetchTasks(params) {
                 type: 'http',
                 url: 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.3/ubuntu-22.04.3-live-server-arm.iso',
                 name: 'ubuntu-22.04.3-live-server-arm.iso',
+                threads: 5,
                 status: 'downloaded',
                 size: '9MB',
                 speed: '1.2MB',
@@ -358,6 +364,12 @@ async function fetchTasks(params) {
     }
 }
 
+// 改变线程数
+async function changeThreads(id, threads) {
+    console.log(id, threads)
+    return true
+}
+
 async function submitDownloadPath(path) {
     console.log(path)
     return true
@@ -365,7 +377,7 @@ async function submitDownloadPath(path) {
 
 // 重新下载任务的详细信息，ids是一个数组，单个任务，就是一个元素的数组，多个任务就是多个元素的数组，实现同一个接口单量和多量的处理
 async function fetchTaskInfo(ids) {
-    console.log(ids,'刷新，重新获取任务的详细信息')
+    console.log(ids, '刷新，重新获取任务的详细信息')
     // return {
     //     id: 'refreshed_id',
     //     type: 'http',

@@ -125,6 +125,16 @@
                     this.pos = (this.currentPage - 1) * this.limit
                     await this.fetchData()
                 },
+                async handlThreads(task, type) {
+                    if (type === 'up') {
+                        task.threads++
+                        await changeThreads(task.id, task.threads)
+                    }
+                    else {
+                        task.threads++
+                        await changeThreads(task.id, task.threads)
+                    }
+                }
             }
         }
     </script>
@@ -239,6 +249,12 @@
                         <div class="w-full">
                             <div class="flex items-center justify-between text-gray-500 w-full">
                                 <p x-text="task.name"></p>
+                                <div class="flex items-center text-gray-800">
+                                    <p class="cursor-pointer" @click="handlThreads(task,'desc')">-</p>
+                                    <!-- <input type="number" x-model="task.threads" class="h-2 w-16"> -->
+                                    <p class="mx-3 underline" x-text="task.threads"></p>
+                                    <p class="cursor-pointer" @click="handlThreads(task,'up')">+</p>
+                                </div>
                                 <div class="flex items-center space-x-3 invisible group-hover:visible">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor"
