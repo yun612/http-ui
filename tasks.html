@@ -131,8 +131,13 @@
                         await changeThreads(task.id, task.threads)
                     }
                     else {
-                        task.threads++
+                        if (task.threads === 1) {
+                            return
+                        }
+                        else {
+                        task.threads--
                         await changeThreads(task.id, task.threads)
+                        }
                     }
                 }
             }
