@@ -5,50 +5,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cms.ruzhila.cn/static/tailwind-3.3.2.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
-    <script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
+    <title>File</title>
+    <script src="./assets/tailwind-3.3.2.js"></script>
+    <script type="module" src="./assets/alpine.min.js"></script>
+    <script nomodule src="./assets/alpine-ie11.min.js" defer></script>
     <script src="./api.js"></script>
     <script>
         function initFile() {
             return {
                 files: [],
                 optionValue: '',
-                filePath: ['/file'],
-                async fetchData(path) {
-                    await fetchFileList(path).then(res => {
-                        this.files = res
-                        console.log(res)
-                    })
-                },
-                async filterType(paths, type) {
-                    let path = ''
-                    for (let i = 0; i < paths.length; i++) {
-                        path = paths.join('')
+                filePath: ['/'],
+                sort: '',
+                order: 'up',
+                async fetchList(paths, type, sort, order) {
+                    this.order = this.order === 'up' ? 'down' : 'up'
+                    let path = '/'
+                    if (paths) {
+                        for (let i = 0; i < paths.length; i++) {
+                            path = paths.join('')
+                        }
                     }
-                    await fetchFilterFile(path, type).then(res => {
-                        this.files = res
-                        console.log(res)
-                    })
+                    if (type) {
+                        this.optionValue = type
+                    }
+                    if (sort) {
+                        this.sort = sort
+                    }
+                    let data = {
+                        path: path,
+                        type: this.optionValue,
+                        sort: this.sort,
+                        order: this.order
+                    }
+
+                    //   let data = {
+                    //     path: '/',
+                    //     type: '',
+                    //     sort: '',
+                    //     order: 'down'
+                    // }
+                    const resp = await fetchFileList(data)
+                    this.files = resp || []
+                    if (this.files.length === 0) {
+                        alert('No files')
+                    }
                 },
                 goFile(file) {
                     if (file) {
                         if (file.children) {
                             this.filePath.push(file.path)
                             this.files = file.children
-                            // TODO: 这里需要把文件的路径传过去,重新调用接口
-                            // let path = ''
-                            // for (let i = 0; i < this.filePath.length; i++) {
-                            //     path = this.filePath.join('')
-                            //     console.log(path)
-                            // }
-                            // this.fetchData(path)
                         }
                     } else {
                         this.filePath.push(file.path)
-                        // TODO: 这里需要把文件的路径传过去,重新调用接口
-                        // this.fetchData()
                     }
                 },
                 goBack(path) {
@@ -56,17 +66,7 @@
                     const index = this.filePath.indexOf(path)
                     this.filePath.splice(index + 1)
                     console.log(this.filePath)
-                    this.fetchData(path)
-                },
-                sortFileType(paths, type) {
-                    let path = ''
-                    for (let i = 0; i < paths.length; i++) {
-                        path = paths.join('')
-                    }
-                    sortFileList(path, type).then(res => {
-                        this.files = res
-                        console.log(res)
-                    })
+                    this.fetchList(path)
                 }
             }
         }
@@ -104,7 +104,7 @@
                 <span> Settings</span>
             </a>
         </div>
-        <div x-data="initFile()" x-init="fetchData" class="space-y-10 w-full flex-grow pl-10">
+        <div x-data="initFile()" x-init="fetchList" class="space-y-10 w-full flex-grow pl-10">
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center space-x-1">
                     <template x-if="filePath.length>0">
@@ -117,8 +117,8 @@
                     </template>
                 </div>
 
-                <select x-model="optionValue" @change="filterType(filePath,optionValue)" class="rounded-md">
-                    <option value="all">All(*.*)</option>
+                <select x-model="optionValue" @change="fetchList(filePath,optionValue)" class="rounded-md">
+                    <option value="">All(*.*)</option>
                     <option value="video">Video(*.mp4;*.mov)</option>
                     <option value="image">Photo(*.png;*.jpg;*.gif)</option>
                     <option value="archive">Archive(*.zip;*.rar;*.tar)</option>
@@ -135,7 +135,7 @@
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                                             <div class="flex items-center cursor-pointer"
-                                                @click="sortFileType(filePath,'name')">
+                                                @click="fetchList(filePath,undefined,'name')">
                                                 <p>File name</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -147,7 +147,7 @@
                                         <th scope="col"
                                             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             <div class="flex items-center cursor-pointer"
-                                                @click="sortFileType(filePath,'size')">
+                                                @click="fetchList(filePath,undefined,'size')">
                                                 <p>Size</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -159,7 +159,7 @@
                                         <th scope="col"
                                             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             <div class="flex items-center cursor-pointer"
-                                                @click="sortFileType(filePath,'createdAt')">
+                                                @click="fetchList(filePath,undefined,'createdAt')">
                                                 <p>Create time</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
