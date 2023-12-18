@@ -1,22 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test and backend</title>
-    <script src="https://cms.ruzhila.cn/static/tailwind-3.3.2.js"></script>
-
-    <script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
-    <script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
-    <script src="./api.js"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE Demo</title>
 </head>
-
 <body>
-    <div x-data="{ message: 'Hello, Alpine.js!' }">
-        <p x-text="message"></p>
-    </div>
-</body>
+  <h1>SSE Demo</h1>
+  <button onclick="connectSSE()">建立 SSE 连接</button>  
+  <button onclick="closeSSE()">断开 SSE 连接</button>
+  <br />
+  <br />
+  <div id="message"></div>
 
+  <script>
+    const messageElement = document.getElementById('message')
+
+    let eventSource
+
+    // 建立 SSE 连接
+    const connectSSE = () => {
+      eventSource = new EventSource('http://127.0.0.1:3003/sse?content=xxx')
+
+      // 监听消息事件
+      eventSource.addEventListener('customEvent', (event) => {
+        const data = JSON.parse(event.data)
+        messageElement.innerHTML += `${data.id} --- ${data.time} --- params参数：${JSON.stringify(data.params)}` + '<br />'
+      })
+
+      eventSource.onopen = () => {
+        messageElement.innerHTML += `SSE 连接成功，状态${eventSource.readyState}<br />`
+      }
+
+      eventSource.onerror = () => {
+        messageElement.innerHTML += `SSE 连接错误，状态${eventSource.readyState}<br />`
+      }
+    }
+
+    // 断开 SSE 连接
+    const closeSSE = () => {
+      eventSource.close()
+      messageElement.innerHTML += `SSE 连接关闭，状态${eventSource.readyState}<br />`
+    }
+  </script>
+</body>
 </html>
