@@ -10,6 +10,7 @@
     <script type="module" src="./assets/alpine.min.js"></script>
     <script nomodule src="./assets/alpine-ie11.min.js" defer></script>
     <script src="./api.js"></script>
+    <script src="./server.js"></script>
 
     <script>
         function initTasks() {
@@ -41,6 +42,8 @@
                     console.log(resp)
                     if (!this.taskData) {
                         alert("数据为空")
+                    } else {
+                        connectSSE()
                     }
                 },
                 async submitData(path) {
@@ -122,22 +125,15 @@
                         currentPage: this.currentPage,
                         status: this.optionValue
                     }
-                    console.log(data)
-                    if (optionValue === 'all') {
-                        await this.fetchData()
-                        return
-                    } else {
-                        await fetchTasks(data).then(res => {
-                            console.log(res)
-                            this.tasks = res
-                            this.taskData = res.items || []
-                            if (!this.taskData) {
-                                alert("数据为空")
-                            }
-                        })
 
-                    }
-
+                    fetchTasks(data).then(res => {
+                        this.tasks = res
+                        if (res.items.length=0) {
+                            alert("数据为空")
+                            return
+                        }
+                        this.taskData = res.items
+                    })
                 },
                 async toNextPage() {
                     console.log(this.currentPage)
@@ -194,7 +190,7 @@
 <div class="w-full h-full">
     <div class="flex max-w-7xl mx-auto px-20 space-x-40 py-20">
         <div class="fixed w-40 space-y-6 border-r h-full">
-            <a href="/index.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
+            <a href="./index.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -202,7 +198,7 @@
                 </svg>
                 <span>File</span>
             </a>
-            <a href="/tasks.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
+            <a href="./tasks.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -211,7 +207,7 @@
                 <span>Transfers</span>
             </a>
 
-            <a href="/setting.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
+            <a href="./setting.html" class="flex items-center space-x-2 hover:text-indigo-700 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -236,7 +232,7 @@
                     </div>
                     <select name="" id="" class="h-10 rounded" x-model="optionValue" class="capitalize"
                         @change="filterTask(optionValue)">
-                        <option value="all">All</option>
+                        <option value="">All</option>
                         <option value="downloaded"> Downloaded</option>
                         <option value="pending">Pending</option>
                         <option value="canceled">Canceled</option>
@@ -283,15 +279,10 @@
                 <div class="flex items-center space-x-6">
                     <input type="checkbox" class="rounded" :value="task.id" x-model="checkValue">
                     <div class="bg-gray-100 shadow-md rounded-md flex w-full items-center p-3 py-5 space-x-4 group">
-                        <template x-if="task.type==='bt'">
-                            <img src="./public/bt.png" alt="" class="w-7 h-7 rounded-full">
-                        </template>
-                        <template x-if="task.type==='http'">
-                            <p class="font-semibold text-lg text-green-600">HTTP</p>
-                        </template>
+                        <p class="font-semibold text-lg text-green-600">HTTP</p>
                         <div class="w-full">
                             <div class="flex items-center justify-between text-gray-500 w-full">
-                                <p x-text="task.name"></p>
+                                <p x-text="task.name" class="w-80 truncate"></p>
                                 <div class="space-y-2">
                                     <template x-if="task.threads">
                                         <div class="flex items-center text-gray-800 ml-2">
@@ -340,11 +331,16 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="bg-gray-300 w-full h-2 relative rounded-full mt-3">
-                                <div class="bg-blue-600 h-2 rounded-full" :style="`width: ${task.progress}%`"></div>
-                                <p x-text="`${task.progress}%`" class="absolute right-2 text-sm text-blue-600 top-2">
-                                </p>
-                            </div>
+
+                            <template x-if="task.progress < 100 && task.progress > 0">
+                                <div class="bg-gray-300 w-full h-2 relative rounded-full mt-3">
+                                    <div class="bg-teal-500 h-2 rounded-full" :style="`width: ${task.progress}%`"></div>
+                                    <p x-text="`${task.progress}%`"
+                                        class="absolute right-2 text-sm text-blue-600 top-2">
+                                    </p>
+                                </div>
+                            </template>
+
                             <div class="flex items-center justify-between mt-5">
                                 <p class="font-semibold flex items-center">
                                     <template x-if="task.downloadSpeed">

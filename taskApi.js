@@ -4,8 +4,10 @@ const BASE_URL = "http://localhost:8080"
 
 // TODO: 下面所有的接口都换成自己的接口的名字
 
+
 // tasks 页面 api, params是一个对象，包含了currentPage，optionValue（filter）和limit三个属性,  //用POST 方法
-// 合并一下，默认all的情况，如果optionValue是all，就是获取所有的任务，如果optionValue是filter，就是获取符合filter的任务
+// 合并一下，默认空的情况，如果optionValue是all，就是获取所有的任务，如果optionValue是filter，就是获取符合filter的任务
+
 async function fetchTasks(params) {
     console.log(params)
     const resp = await fetch(`${BASE_URL}/transfer/get_tasks`, {
@@ -16,7 +18,6 @@ async function fetchTasks(params) {
         },
         body: JSON.stringify(params)
     })
-    console.log(resp, 'resp')
     const data = await resp.json()
     console.log(data, 'data json')
     return data.data
