@@ -80,7 +80,7 @@ async function fetchFileList(params) {
             },
         ]
     }
-    if (path === '//data/mock_dir/test1') {
+    if (path === '/data/mock_dir/test1') {
         return [
             {
                 name: 'Test1-1',
@@ -113,7 +113,7 @@ async function fetchFileList(params) {
                 createdAt: '2023-11-11'
             }]
     }
-    if (path === '//data/mock_dir/test2') {
+    if (path === '/data/mock_dir/test2') {
         return [
             {
                 name: 'Test2.txt',

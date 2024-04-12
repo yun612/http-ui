@@ -144,22 +144,6 @@ async function fetchFilterTasks(filter, pos, limit, currentPage) {
     console.log(filter)
     let total = 0
     let items = []
-    if (filter === 'all') {
-        await fetch(BASE_URL + "/transfer/get_tasks?pageNum=" + currentPage + "&pageSize=" + limit + "&filter=" + filter, {
-            method: "GET",
-        }).then(data => {
-            return data.json()
-        }).then(response => {
-            if (response.code === 200) {
-                total = response.data.total
-                items = response.data.items
-            }
-        })
-        return {
-            total: total,
-            items: items
-        }
-    } else {
         await fetch(BASE_URL + "/transfer/get_tasks?pageNum=" + currentPage + "&pageSize=" + limit + "&filter=" + filter, {
             method: "GET",
         }).then(data => {
@@ -175,4 +159,3 @@ async function fetchFilterTasks(filter, pos, limit, currentPage) {
             items: items
         }
     }
-}
